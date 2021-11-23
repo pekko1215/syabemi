@@ -1,0 +1,13 @@
+{
+  "name": "syabemi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "pekko1215 <pekko12152@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.3.1"
+  },
+  "devDependencies": {
+    "prisma": "^3.5.0"
+  }
+}
