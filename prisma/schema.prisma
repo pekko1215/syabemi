@@ -1,55 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum GuildRole {
-  USER
-  ADMIN
-}
-
 model ActiveGuild {
-  id                Int               @id @default(autoincrement())
-  guildId           String            @unique
-  role              GuildRole
-  updatedAt         DateTime
-  createdAt         DateTime          @default(now())
-  enteringStatus    EnteringRoom?
-  dictionaryIndexes DictionaryIndex[]
-  readUpQueue       ReadUpQueue[]
+  id        Int      @id @default(autoincrement())
+  guildId   String   @unique
+  role      Int
+  updatedAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model EnteringRoom {
-  id        Int         @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   updatedAt DateTime
-  createdAt DateTime    @default(now())
-  guild     ActiveGuild @relation(fields: [guildId], references: [guildId])
-  guildId   String      @unique
-  channelId String      @unique
+  createdAt DateTime @default(now())
+  guildId   String   @unique
+  channelId String   @unique
   hostId    String
 }
 
 model DictionaryIndex {
-  id        Int         @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   updatedAt DateTime
-  createdAt DateTime    @default(now())
-  guild     ActiveGuild @relation(fields: [guildId], references: [guildId])
+  createdAt DateTime @default(now())
   guildId   String
-  before    String      @db.VarChar(64)
-  after     String      @db.VarChar(64)
+  before    String
+  after     String
 }
 
 model ReadUpQueue {
-  id       Int         @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
   text     String
   priority Int
-  guild    ActiveGuild @relation(fields: [guildId], references: [guildId])
   guildId  String
 }
