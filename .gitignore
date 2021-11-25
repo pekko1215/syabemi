@@ -3,3 +3,4 @@ node_modules
 .env
 dist
 prisma/db.sqlite3
+config/service-account.json

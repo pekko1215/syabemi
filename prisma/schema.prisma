@@ -22,6 +22,7 @@ model EnteringRoom {
   guildId   String   @unique
   channelId String   @unique
   hostId    String
+  threadId  String   @unique
 }
 
 model DictionaryIndex {
@@ -34,8 +35,9 @@ model DictionaryIndex {
 }
 
 model ReadUpQueue {
-  id       Int    @id @default(autoincrement())
-  text     String
-  priority Int
-  guildId  String
+  id        Int     @id @default(autoincrement())
+  text      String
+  priority  Int
+  guildId   String
+  completed Boolean @default(false)
 }
