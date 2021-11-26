@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
     "run": "./dist/index.js",
-    "start": "ts-node ./src/index.ts",
+    "start": "node --inspect --require ts-node/register ./src/index.ts",
     "generate-client": "prisma generate",
     "migrate": "prisma migrate dev"
   }

@@ -107,6 +107,6 @@ export class SummonCommand extends BotCommand {
 			}
 		})
 
-		BotServices.ReadUp.taskVacuum();
+		BotServices.ReadUp.taskVacuum(enteringRoom.guildId);
 	}
 }
