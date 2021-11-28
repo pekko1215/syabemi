@@ -2,7 +2,7 @@ import { Routes } from "discord-api-types/v9";
 import { ApplicationCommand, CacheType, Channel, Client, CommandInteraction, GuildMember, Interaction, Message, MessageMentions, TextBasedChannel, TextChannel, ThreadManager } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { BotCommand } from "../bot_command";
-import { BotServices, psClient } from "..";
+import { BotServices, JoinHandler, psClient } from "..";
 import { joinVoiceChannel } from "@discordjs/voice";
 
 export class SummonCommand extends BotCommand {
@@ -32,9 +32,7 @@ export class SummonCommand extends BotCommand {
 		const guild = this.bot.guilds.cache.get(interaction.guildId);
 		if (!guild) throw new Error(`Unknown Guild from guildId: ${interaction.guildId}`);
 
-		const activeGuild = await psClient.activeGuild.findUnique({ where: { guildId: guild.id } });
-		if (!activeGuild) throw new Error(`Not found ActiveGuild Data from guildId: ${interaction.guildId}`);
-
+		const activeGuild = await psClient.activeGuild.findUnique({ where: { guildId: guild.id } }) || await JoinHandler.joinGuildEvent(guild);
 		const user = guild.members.cache.get(interaction.member.user.id)!;
 
 		const voice = user.voice;
@@ -76,7 +74,7 @@ export class SummonCommand extends BotCommand {
 		await psClient.enteringRoom.create({
 			data: {
 				channelId: voice.channelId!,
-				guildId: guild.id,
+				activeGuildId: activeGuild.id,
 				hostId: user.id,
 				updatedAt: new Date,
 				threadId: thread.id
@@ -96,17 +94,18 @@ export class SummonCommand extends BotCommand {
 		if (message.content === "") return;
 		if (message.author.bot || !message.channel.isThread()) return;
 		const enteringRoom = await psClient.enteringRoom.findUnique({
-			where: { threadId: message.channelId }
+			where: { threadId: message.channelId },
+			include: { activeGuild: true }
 		})
 		if (!enteringRoom) return;
 		await psClient.readUpQueue.create({
 			data: {
-				guildId: enteringRoom.guildId,
+				enteringRoomId: enteringRoom.id,
 				priority: 1,
 				text: message.content,
 			}
 		})
 
-		BotServices.ReadUp.taskVacuum(enteringRoom.guildId);
+		BotServices.ReadUp.taskVacuum(enteringRoom.activeGuild.guildId);
 	}
 }

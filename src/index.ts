@@ -11,6 +11,7 @@ DotEnv.config()
 export const psClient = new PrismaClient();
 const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES] })
 export const BotServices = BotServiceInitialize(bot);
+export const JoinHandler = new JoinGuildHandler(bot);
 
 console.warn(generateDependencyReport());
 
@@ -18,9 +19,9 @@ async function main() {
 	bot.once("ready", () => {
 		console.log("Bot Ready!!!!!!!!!!");
 	})
-	const joinHandler = await new JoinGuildHandler(bot);
 	await bot.login(process.env.BOT_TOKEN);
 	await CommandRegister(bot)
+	await BotServices.ReadUp.resumeSpeechClient();
 }
 
 main().finally(async () => {

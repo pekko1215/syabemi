@@ -8,21 +8,24 @@ datasource db {
 }
 
 model ActiveGuild {
-  id        Int      @id @default(autoincrement())
-  guildId   String   @unique
-  role      Int
-  updatedAt DateTime
-  createdAt DateTime @default(now())
+  id           Int           @id @default(autoincrement())
+  guildId      String        @unique
+  role         Int
+  updatedAt    DateTime
+  createdAt    DateTime      @default(now())
+  enteringRoom EnteringRoom?
 }
 
 model EnteringRoom {
-  id        Int      @id @default(autoincrement())
-  updatedAt DateTime
-  createdAt DateTime @default(now())
-  guildId   String   @unique
-  channelId String   @unique
-  hostId    String
-  threadId  String   @unique
+  id            Int           @id @default(autoincrement())
+  updatedAt     DateTime
+  createdAt     DateTime      @default(now())
+  channelId     String        @unique
+  hostId        String
+  threadId      String        @unique
+  activeGuild   ActiveGuild   @relation(fields: [activeGuildId], references: [id], onDelete: Cascade)
+  readUpQueues  ReadUpQueue[]
+  activeGuildId Int           @unique
 }
 
 model DictionaryIndex {
@@ -35,9 +38,10 @@ model DictionaryIndex {
 }
 
 model ReadUpQueue {
-  id        Int     @id @default(autoincrement())
-  text      String
-  priority  Int
-  guildId   String
-  completed Boolean @default(false)
+  id             Int          @id @default(autoincrement())
+  text           String
+  priority       Int
+  enteringRoom   EnteringRoom @relation(fields: [enteringRoomId], references: [id], onDelete: Cascade)
+  completed      Boolean      @default(false)
+  enteringRoomId Int
 }
